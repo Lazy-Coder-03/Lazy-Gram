@@ -1,10 +1,8 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 /* index.css or your stylesheet */
 
-/* html, body, div{
+html, body, div{
     user-select: none;
-  } */
-  
+  } 

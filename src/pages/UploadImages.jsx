@@ -9,7 +9,7 @@ const UploadImages = () => {
   return (
     <div className="max-w-4xl mx-auto">
       <Navbar />
-      <UploadForm/>
+      <UploadForm />
     </div>
   );
 };
