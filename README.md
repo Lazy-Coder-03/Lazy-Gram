@@ -97,6 +97,6 @@ This project is licensed under the [MIT License](LICENSE).
 ---
 
 If you have any questions or need further assistance, don't hesitate to reach out. Happy coding!
-```
+
 
 Make sure to update the Firebase configuration placeholders in the `.env` section with your actual Firebase configuration values.
