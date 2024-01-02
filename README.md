@@ -15,7 +15,7 @@ Make sure you have [Node.js](https://nodejs.org/) installed on your machine.
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-username/lazy-gram.git
+   git clone https://github.com/Lazy-Coder-03/lazy-gram.git
    ```
 
 2. Navigate to the project directory:
