@@ -1,5 +1,5 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+// import React from 'react'
+// import PropTypes from 'prop-types'
 import Navbar from '../components/Navbar'
 import ImageGallery from '../components/ImageGallery'
 
@@ -12,9 +12,9 @@ function UserUploads() {
     )
 }
 
-UserUploads.propTypes = {
+// UserUploads.propTypes = {
 
-}
+// }
 
 export default UserUploads
 

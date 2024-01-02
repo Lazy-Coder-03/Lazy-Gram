@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { storage } from '../firebase/config';
 import { uploadBytes, ref, getDownloadURL } from 'firebase/storage';
 import { auth, firestore } from '../firebase/config';

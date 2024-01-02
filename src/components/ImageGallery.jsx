@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { auth, firestore, storage } from '../firebase/config';
 import {
   doc,
@@ -7,7 +7,7 @@ import {
   getDocs,
   query,
   deleteDoc,setDoc,
-  arrayRemove,
+  
 } from 'firebase/firestore';
 import { ref, deleteObject } from 'firebase/storage';
 import PropTypes from 'prop-types';
