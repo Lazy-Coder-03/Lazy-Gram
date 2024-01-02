@@ -3,12 +3,13 @@ import { storage } from '../firebase/config';
 import { uploadBytes, ref, getDownloadURL } from 'firebase/storage';
 import { auth, firestore } from '../firebase/config';
 import { doc, getDoc, setDoc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
 
 function UploadForm() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
-
+  const navigate = useNavigate();
   const allowedFileTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/bmp'];
 
   const handleChange = (e) => {
@@ -23,8 +24,6 @@ function UploadForm() {
     }
   };
 
-
-  // ... (previous imports)
 
   const handleUpload = async () => {
     if (selectedFile) {
@@ -66,6 +65,7 @@ function UploadForm() {
         console.error('Error uploading file:', error);
         setError('Error uploading file. Please try again.');
       } finally {
+        navigate('/');
         setUploading(false);
       }
     }
@@ -95,6 +95,7 @@ function UploadForm() {
         <button onClick={handleUpload} className="btn btn-primary gap-3" disabled={uploading || !selectedFile}>
           Upload
         </button>
+        <span className="text-lilac-700">Recommended Aspect Ratio is 1:1</span>
       </form>
     </div>
   );

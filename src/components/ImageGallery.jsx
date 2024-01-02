@@ -143,19 +143,19 @@ const ImageGallery = ({ page }) => {
         <p>Loading...</p>
       ) : (
         imageData.map((imageInfo, index) => (
-          <div key={index} className="card card-compact w-96 md:w-auto bg-lilac-200 shadow-xl">
+          <div key={index} className="card card-compact w-80 md:w-auto bg-lilac-200 shadow-xl">
             <figure>
-              <img className="w-40 my-5" src={imageInfo.imageUrl} alt={`Image ${index + 1}`} />
+              <img src={imageInfo.imageUrl} alt={`Image ${index + 1}`} />
               {page === 'user' && (
                 <button
-                  className="absolute top-2 right-2 text-red-500"
+                  className="absolute top-2 right-2 text-red-500 text-center"
                   onClick={() => handleDeleteImage(imageInfo.imageUrl)}
                 >
                   <i className="fi fi-ss-trash"></i>
                 </button>
               )}
             </figure>
-            <div className="card-body text-center text-bold">
+            <div className="card-body text-center text-bold text-lilac-800">
               <span>Uploaded By: {imageInfo.uploadedBy}</span>
               <span>Created on: {imageInfo.uploadedOn}</span>
             </div>
@@ -168,10 +168,10 @@ const ImageGallery = ({ page }) => {
           <h3 className="font-bold text-lg">Confirm Deletion</h3>
           <p className="py-4">Are you sure you want to delete this image?</p>
           <div className="modal-action">
-            <button className="btn" onClick={() => confirmDelete()}>
+            <button className="btn btn-error" onClick={() => confirmDelete()}>
               Confirm
             </button>
-            <button className="btn" onClick={() => document.getElementById('my_modal_5').close()}>
+            <button className="btn btn-success" onClick={() => document.getElementById('my_modal_5').close()}>
               Cancel
             </button>
           </div>
