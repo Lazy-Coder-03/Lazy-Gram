@@ -6,8 +6,8 @@ import {
   collection,
   getDocs,
   query,
-  deleteDoc,setDoc,
-  
+  deleteDoc,
+  setDoc,
 } from 'firebase/firestore';
 import { ref, deleteObject } from 'firebase/storage';
 import PropTypes from 'prop-types';
@@ -71,7 +71,6 @@ const ImageGallery = ({ page }) => {
 
           // Redirect to 'your-uploads' page
           navigate('/');
-
         }
       }
     } catch (error) {
@@ -84,11 +83,12 @@ const ImageGallery = ({ page }) => {
       try {
         setLoading(true);
 
+        let allImageData = [];
+
         if (page === 'pub') {
           const allUploadsQuery = query(collection(firestore, 'user_uploads'));
           const allUploadsSnapshot = await getDocs(allUploadsQuery);
 
-          const allImageData = [];
           for (const doc of allUploadsSnapshot.docs) {
             const uid = doc.id;
             const userImages = doc.data().imageUrls || [];
@@ -103,8 +103,6 @@ const ImageGallery = ({ page }) => {
               });
             }
           }
-
-          setImageData(allImageData);
         } else if (page === 'user') {
           const uid = auth.currentUser.uid;
           const userUploadsRef = doc(firestore, 'user_uploads', uid);
@@ -114,19 +112,21 @@ const ImageGallery = ({ page }) => {
             const userImages = userUploadsDoc.data().imageUrls || [];
             const uploadedOnArray = userUploadsDoc.data().uploadedOn || [];
 
-            const userImageData = [];
             for (const [index, imageUrl] of userImages.entries()) {
               const uploadedOn = uploadedOnArray[index];
-              userImageData.push({
+              allImageData.push({
                 imageUrl,
                 uploadedBy: await getUsername(uid),
                 uploadedOn: new Date(uploadedOn).toLocaleDateString(),
               });
             }
-
-            setImageData(userImageData);
           }
         }
+
+        // Sort the array by uploadedOn in descending order
+        allImageData.sort((a, b) => new Date(b.uploadedOn) - new Date(a.uploadedOn));
+
+        setImageData(allImageData);
       } catch (error) {
         console.error('Error fetching image data:', error);
       } finally {
