@@ -8,8 +8,9 @@ import {
   query,
   deleteDoc,
   setDoc,
+  updateDoc,
 } from 'firebase/firestore';
-import { ref, deleteObject } from 'firebase/storage';
+import { ref, deleteObject, } from 'firebase/storage';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 
@@ -17,6 +18,8 @@ const ImageGallery = ({ page }) => {
   const [imageData, setImageData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleteImageUrl, setDeleteImageUrl] = useState('');
+  const [selectedCaption, setSelectedCaption] = useState('');
+  const [selectedImageUrl, setSelectedImageUrl] = useState('');
   const navigate = useNavigate();
 
   const getUsername = async (uid) => {
@@ -26,7 +29,13 @@ const ImageGallery = ({ page }) => {
 
   const handleDeleteImage = (imageUrl) => {
     setDeleteImageUrl(imageUrl);
-    document.getElementById('my_modal_5').showModal();
+    document.getElementById('delete_modal').showModal();
+  };
+
+  const handleEditCaption = (imageUrl, caption) => {
+    setSelectedImageUrl(imageUrl);
+    setSelectedCaption(caption);
+    document.getElementById('edit_caption_modal').showModal();
   };
 
   const confirmDelete = async () => {
@@ -68,7 +77,7 @@ const ImageGallery = ({ page }) => {
           });
 
           // Close the modal
-          document.getElementById('my_modal_5').close();
+          document.getElementById('delete_modal').close();
 
           // Redirect to 'your-uploads' page
           navigate('/');
@@ -76,6 +85,41 @@ const ImageGallery = ({ page }) => {
       }
     } catch (error) {
       console.error('Error deleting image:', error);
+    }
+  };
+
+  const confirmEditCaption = async () => {
+    try {
+      // Update caption in Firestore user uploads collection
+      const uid = auth.currentUser.uid;
+      const userUploadsRef = doc(firestore, 'user_uploads', uid);
+
+      // Get the current data
+      const userUploadsDoc = await getDoc(userUploadsRef);
+
+      if (userUploadsDoc.exists()) {
+        const userImages = userUploadsDoc.data().imageUrls || [];
+        const captions = userUploadsDoc.data().captions || [];
+
+        // Find the index of the image URL
+        const indexToUpdate = userImages.indexOf(selectedImageUrl);
+
+        if (indexToUpdate !== -1) {
+          // Update the caption at the specified index
+          const updatedCaptions = [...captions];
+          updatedCaptions[indexToUpdate] = selectedCaption;
+
+          // Update the document in Firestore
+          await updateDoc(userUploadsRef, {
+            captions: updatedCaptions,
+          });
+
+          // Close the modal
+          document.getElementById('edit_caption_modal').close();
+        }
+      }
+    } catch (error) {
+      console.error('Error updating caption:', error);
     }
   };
 
@@ -93,14 +137,18 @@ const ImageGallery = ({ page }) => {
           for (const doc of allUploadsSnapshot.docs) {
             const uid = doc.id;
             const userImages = doc.data().imageUrls || [];
+            const captions = doc.data().captions || [];
             const uploadedOnArray = doc.data().uploadedOn || [];
 
             for (const [index, imageUrl] of userImages.entries()) {
               const uploadedOn = uploadedOnArray[index];
+              const caption = captions[index] || '';
+
               allImageData.push({
                 imageUrl,
                 uploadedBy: await getUsername(uid),
                 uploadedOn: new Date(uploadedOn).getTime(),
+                caption,
               });
             }
           }
@@ -111,14 +159,18 @@ const ImageGallery = ({ page }) => {
 
           if (userUploadsDoc.exists()) {
             const userImages = userUploadsDoc.data().imageUrls || [];
+            const captions = userUploadsDoc.data().captions || [];
             const uploadedOnArray = userUploadsDoc.data().uploadedOn || [];
 
             for (const [index, imageUrl] of userImages.entries()) {
               const uploadedOn = uploadedOnArray[index];
+              const caption = captions[index] || '';
+
               allImageData.push({
                 imageUrl,
                 uploadedBy: await getUsername(uid),
                 uploadedOn: new Date(uploadedOn).getTime(),
+                caption,
               });
             }
           }
@@ -154,33 +206,68 @@ const ImageGallery = ({ page }) => {
             <figure>
               <img src={imageInfo.imageUrl} alt={`Image ${index + 1}`} />
               {page === 'user' && (
-                <button
-                  className="absolute top-2 right-2 text-red-500 text-center"
-                  onClick={() => handleDeleteImage(imageInfo.imageUrl)}
-                >
-                  <i className="fi fi-ss-trash"></i>
-                </button>
+                <>
+                  <button
+                    className="absolute top-2 right-2 text-red-500 text-center"
+                    onClick={() => handleDeleteImage(imageInfo.imageUrl)}
+                  >
+                    <i className="fi fi-ss-trash"></i>
+                  </button>
+                  <button
+                    className="absolute bottom-[4.2rem] right-5 text-blue-500 text-center"
+                    onClick={() => handleEditCaption(imageInfo.imageUrl, imageInfo.caption)}
+                  >
+                    <i className="fi fi-ss-pencil"></i>
+                  </button>
+                </>
               )}
             </figure>
-            <div className="card-body text-center text-bold text-lilac-800">
-              <span>Uploaded By: {imageInfo.uploadedBy}</span>
-              <span>Uploaded on: {formatUploadDate(imageInfo.uploadedOn)}</span>
+            <div className="card-body text-left text-bold text-lilac-800">
+              {imageInfo.caption && <span>{imageInfo.caption}</span>}
+              <span>Posted By: {imageInfo.uploadedBy}</span>
+              <span>Posted on: {formatUploadDate(imageInfo.uploadedOn)}</span>
+              
             </div>
           </div>
         ))
       )}
-      {/* Confirmation Modal */}
-      <dialog id="my_modal_5" className="modal modal-bottom sm:modal-middle">
+      {/* Confirmation Modal for Deletion */}
+      <dialog id="delete_modal" className="modal modal-bottom sm:modal-middle">
         <div className="modal-box">
           <h3 className="font-bold text-lg">Confirm Deletion</h3>
           <p className="py-4">Are you sure you want to delete this image?</p>
           <div className="modal-action">
-            <button className="btn btn-success" onClick={() => confirmDelete()}>
+            <button className="btn btn-success" onClick={confirmDelete}>
               Confirm
             </button>
             <button
               className="btn btn-error"
-              onClick={() => document.getElementById('my_modal_5').close()}
+              onClick={() => document.getElementById('delete_modal').close()}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </dialog>
+      {/* Modal for Editing Caption */}
+      <dialog id="edit_caption_modal" className="modal modal-bottom sm:modal-middle">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Edit Caption</h3>
+          <div className="py-4">
+            <textarea
+              className="w-full h-20 p-2 border border-gray-300 rounded-md"
+              placeholder="Enter caption..."
+              value={selectedCaption}
+              onChange={(e) => setSelectedCaption(e.target.value)}
+            ></textarea>
+          </div>
+          <div className="modal-action">
+            <button className="btn btn-success" onClick={confirmEditCaption}>
+              Save Caption
+            </button>
+            <button
+              className="btn btn-error"
+              onClick={() => document.getElementById('edit_caption_modal').close()}
             >
               Cancel
             </button>

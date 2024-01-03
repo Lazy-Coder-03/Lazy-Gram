@@ -104,14 +104,14 @@ const Navbar = () => {
                 <img alt="Profile Avatar" src={profilePicture} />
               </div>
             </div>
-            <ul className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
-              <li>
-                <button onClick={redirectToUpdateProfile} className="btn">
+            <ul className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 ">
+              <li className="pb-3">
+                <button onClick={redirectToUpdateProfile} className="btn py-3 text-lilac-600">
                   Profile
                 </button>
               </li>
               <li>
-                <button onClick={openLogoutConfirmationModal} className="btn">
+                <button onClick={openLogoutConfirmationModal} className="btn py-3 text-error">
                   Logout
                 </button>
               </li>
