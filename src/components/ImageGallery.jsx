@@ -41,6 +41,7 @@ const ImageGallery = ({ page }) => {
 
       // Get the current data
       const userUploadsDoc = await getDoc(userUploadsRef);
+
       if (userUploadsDoc.exists()) {
         const userImages = userUploadsDoc.data().imageUrls || [];
         const uploadedOnArray = userUploadsDoc.data().uploadedOn || [];
@@ -99,7 +100,7 @@ const ImageGallery = ({ page }) => {
               allImageData.push({
                 imageUrl,
                 uploadedBy: await getUsername(uid),
-                uploadedOn: new Date(uploadedOn).toLocaleDateString(),
+                uploadedOn: new Date(uploadedOn).getTime(),
               });
             }
           }
@@ -117,14 +118,14 @@ const ImageGallery = ({ page }) => {
               allImageData.push({
                 imageUrl,
                 uploadedBy: await getUsername(uid),
-                uploadedOn: new Date(uploadedOn).toLocaleDateString(),
+                uploadedOn: new Date(uploadedOn).getTime(),
               });
             }
           }
         }
 
         // Sort the array by uploadedOn in descending order
-        allImageData.sort((a, b) => new Date(b.uploadedOn) - new Date(a.uploadedOn));
+        allImageData.sort((a, b) => b.uploadedOn - a.uploadedOn);
 
         setImageData(allImageData);
       } catch (error) {
@@ -136,6 +137,12 @@ const ImageGallery = ({ page }) => {
 
     fetchImageUrls();
   }, [page, setImageData]);
+
+  const formatUploadDate = (timestamp) => {
+    const date = new Date(timestamp);
+    const options = { day: '2-digit', month: 'short', year: '2-digit' };
+    return new Intl.DateTimeFormat('en-US', options).format(date);
+  };
 
   return (
     <div className="grid md:grid-cols-3 justify-center gap-10 my-5">
@@ -157,7 +164,7 @@ const ImageGallery = ({ page }) => {
             </figure>
             <div className="card-body text-center text-bold text-lilac-800">
               <span>Uploaded By: {imageInfo.uploadedBy}</span>
-              <span>Created on: {imageInfo.uploadedOn}</span>
+              <span>Uploaded on: {formatUploadDate(imageInfo.uploadedOn)}</span>
             </div>
           </div>
         ))
@@ -168,10 +175,13 @@ const ImageGallery = ({ page }) => {
           <h3 className="font-bold text-lg">Confirm Deletion</h3>
           <p className="py-4">Are you sure you want to delete this image?</p>
           <div className="modal-action">
-            <button className="btn btn-error" onClick={() => confirmDelete()}>
+            <button className="btn btn-success" onClick={() => confirmDelete()}>
               Confirm
             </button>
-            <button className="btn btn-success" onClick={() => document.getElementById('my_modal_5').close()}>
+            <button
+              className="btn btn-error"
+              onClick={() => document.getElementById('my_modal_5').close()}
+            >
               Cancel
             </button>
           </div>
