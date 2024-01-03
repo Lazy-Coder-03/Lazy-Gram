@@ -1,19 +1,18 @@
-// src/firebase.js (or any file where you initialize Firebase)
-
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_REACT_APP_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_REACT_APP_FIREBASE_AUTH_DOMAIN,
-  databaseURL: import.meta.env.VITE_REACT_APP_FIREBASE_DATABASE_URL,
-  projectId: import.meta.env.VITE_REACT_APP_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_REACT_APP_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_REACT_APP_FIREBASE_APP_ID,
+  apiKey: "AIzaSyDXR2StQJlWJbu_bIKLzuvHSmfgRKoe2CU",
+  authDomain: "playground-database-b8293.firebaseapp.com",
+  databaseURL: "https://playground-database-b8293-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "playground-database-b8293",
+  storageBucket: "playground-database-b8293.appspot.com",
+  messagingSenderId: "447731721791",
+  appId: "1:447731721791:web:c6fcb203668d10cd03ba8a"
 };
+
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
